@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+   db1:
+     image: mysql:5.7
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: wordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress1:
+     depends_on:
+       - db1
+     image: wordpress:latest
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db1:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       WORDPRESS_DB_NAME: wordpress
+
+   db2:
+     image: mysql:5.7
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: wordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   wordpress2:
+     depends_on:
+       - db2
+     image: wordpress:latest
+     restart: always
+     environment:
+       WORDPRESS_DB_HOST: db2:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+       WORDPRESS_DB_NAME: wordpress
+
+   reverseproxy:
+     depends_on:
+       - wordpress1
+       - wordpress2
+     image: reverseproxy:latest
+     ports:
+       - "80:80"
+     restart: always
